@@ -86,8 +86,12 @@ impl Default for PlayerEvent {
 
 /// Типаж изменения состояния игры
 pub trait EventsBuilder {
-    /// повернуть игрока так чтобы он смотрел на опеределённую точку
+    /// говорит что следующее действие происходит в то же время что и предыдущее
+    fn in_same_time( &mut self ) -> &mut Self;
+    /// повернуть игрока так чтобы он смотрел по определённому углу
     fn player_rotate( &mut self, player_id: Id, azimuth: Angle ) -> &mut Self;
+    /// игрок передвигается по прямой в определённую точку
+    fn player_move_by_line_to( &mut self, player_id: Id, pos: Point ) -> &mut Self;
     /// задать скорость изменения предыдущего действия
     fn with_speed( &mut self, speed: Duration ) -> &mut Self;
     /// задать паузу которую нужно выдержать в этом фрейме событий
@@ -95,32 +99,59 @@ pub trait EventsBuilder {
 }
 
 impl EventsBuilder for Game {
+    fn in_same_time( &mut self ) -> &mut Self {
+        self.next_action_in_parallel_flag = true;
+        self
+    }
+
     fn with_speed( &mut self, speed: Duration ) -> &mut Self {
-        change_last_player_event( self, |e| e.duration = speed );
+        self.change_last_player_event( |e| e.duration = speed );
         self
     }
 
     fn with_pause( &mut self, pause: Duration ) -> &mut Self {
-        change_last_player_event( self, |e| e.pause_before_start = pause );
+        self.change_last_player_event( |e| e.pause_before_start = pause );
         self
     }
 
     fn player_rotate( &mut self, player_id: Id, azimuth: Angle ) -> &mut Self {
-        self.events.push( GameEvent::PlayerEvent( PlayerEvent {
+        self.add_player_event( 
             player_id,
-            action: PlayerDiff::RotateTo( azimuth.clone() ),
-            time_frame_idx: self.frame_idx,
-            ..Default::default()
-        }));
+            PlayerDiff::RotateTo( azimuth.clone() )
+        );
         self.players[ player_id ].angle = azimuth;
+        self
+    }
+
+    fn player_move_by_line_to( &mut self, player_id: Id, pos: Point ) -> &mut Self {
+        self.add_player_event(
+            player_id,
+            PlayerDiff::MoveTo( pos.clone() )
+        );
+        self.players[ player_id ].position = pos;
         self
     }
 }
 
-fn change_last_player_event<F>( game: &mut Game, f: F ) where F : Fn(&mut PlayerEvent) {
-    if let Some( event ) = game.events.last_mut() {
-        if let GameEvent::PlayerEvent( event ) = event {
-            f( event );
+impl Game {
+    fn change_last_player_event<F>( &mut self, f: F ) where F : Fn(&mut PlayerEvent) {
+        if let Some( event ) = self.events.last_mut() {
+            if let GameEvent::PlayerEvent( event ) = event {
+                f( event );
+            }
         }
+    }
+
+    fn add_player_event( &mut self, player_id: Id, action: PlayerDiff ) {
+        if !self.next_action_in_parallel_flag { 
+            self.frame_idx += 1;
+        } 
+        self.next_action_in_parallel_flag = false;
+        self.events.push(GameEvent::PlayerEvent( PlayerEvent{
+            player_id,
+            action,
+            time_frame_idx: self.frame_idx,
+            ..Default::default()
+        }));
     }
 }
