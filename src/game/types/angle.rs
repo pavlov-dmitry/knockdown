@@ -2,11 +2,15 @@ use std::ops::{ Add, Sub };
 use std::convert::From;
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Angle( f32 );
+pub struct Angle( pub f32 );
 
 impl Angle {
     pub fn new( value: f32 ) -> Angle {
         Angle( value ).normalize()
+    }
+
+    pub fn from_radians( value: f32 ) -> Angle {
+        Angle( value.to_degrees() ).normalize()
     }
 
     fn normalize( self ) -> Self {
@@ -16,12 +20,12 @@ impl Angle {
         Angle( val )
     }
 
-    pub fn sin( self ) -> f32 {
+    pub fn sin( &self ) -> f32 {
         let Angle( val ) = self;
         val.to_radians().sin()
     }
 
-    pub fn cos( self ) -> f32 {
+    pub fn cos( &self ) -> f32 {
         let Angle( val ) = self;
         val.to_radians().cos()
     }
