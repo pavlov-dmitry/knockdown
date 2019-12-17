@@ -68,7 +68,7 @@ mod tests {
         assert_eq!( second_player, game.players[ 1 ] );
         assert_eq!( 
             game.players[ player_id ],
-            Player{ position: Point::new( 1.0, 2.5 ), ..first_player }
+            Player{ position: Point::new( 1.0, 2.0 ), ..first_player }
         );
     }
 }

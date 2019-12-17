@@ -7,7 +7,7 @@ pub fn move_forward<S: GameState + EventsBuilder>( game: &mut S, player_id: Id )
     let target = game.get_player_target( player_id );
     let angle = player.position.angle_to( &target.position );
     let distance = player.position.distance_to( &target.position );
-    let distance = distance.min( 1.5 );
+    let distance = distance.min( 1.0 );
     let new_player_pos = player.position.layout_point( &angle, distance );
     if angle != player.angle {
         game.player_rotate(player_id, angle);
