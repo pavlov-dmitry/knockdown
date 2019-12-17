@@ -23,7 +23,7 @@ mod tests {
     #[test]
     fn move_forward() {
         let player_id = 0;
-        let first_player = Player::new( 0, 3, Point::new( 1.0, 1.0 ), Angle::new( 0.0 ) );
+        let first_player = Player::new( 0, 3, Point::new( 1.0, 1.0 ), Angle::new( 90.0 ) );
         let second_player = Player::new( 1, 3, Point::new( 1.0, 4.0 ), Angle::new( 180.0 ) );
         let mut game = Game::new(
             Field::new( 5.0, 5.0 ),
@@ -36,7 +36,11 @@ mod tests {
         assert_eq!( second_player, game.players[ 1 ] );
         assert_eq!( 
             game.players[ player_id ],
-            Player{ position: Point::new( 1.0, 2.0 ), ..first_player }
+            Player { 
+                position: Point::new( 1.0, 2.0 ),
+                angle: Angle::new( 0.0 ),
+                ..first_player 
+            }
         );
     }
 }
