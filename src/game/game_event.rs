@@ -61,12 +61,6 @@ struct MoveByCircle {
     angle: Angle
 }
 
-impl MoveByCircle {
-    pub fn calc_end_point(&self) -> Point {
-        unimplemented!();
-    }
-}
-
 #[derive(Debug)]
 struct GameOver {
     winner_player_id: Id
