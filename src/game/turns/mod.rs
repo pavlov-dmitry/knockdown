@@ -1,5 +1,10 @@
-mod move_forward;
 use super::GameState;
 use super::EventsBuilder;
 
-pub use move_forward::make_move_forward;
+use super::types;
+
+mod move_forward;
+pub use move_forward::move_forward;
+
+mod pass;
+pub use pass::pass;

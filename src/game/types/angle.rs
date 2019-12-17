@@ -1,7 +1,7 @@
 use std::ops::{ Add, Sub };
 use std::convert::From;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub struct Angle( pub f32 );
 
 impl Angle {
@@ -54,6 +54,14 @@ impl Sub<f32> for Angle {
 impl From<f32> for Angle {
     fn from( val : f32 ) -> Angle {
         Angle( val ).normalize()
+    }
+}
+
+impl PartialEq for Angle {
+    fn eq( &self, other: &Self ) -> bool {
+        let Angle( val ) = self;
+        let Angle( other_val ) = other;
+        (val - other_val).abs() < std::f32::EPSILON
     }
 }
 
