@@ -38,4 +38,25 @@ mod tests {
             }
         );
     }
+
+    #[test]
+    fn pass_no_rotate() {
+        let player_id = 0;
+        let target_id = 1;
+        let first_player = Player::new( 0, 3, Point::new( 1.0, 1.0 ), Angle::new( 0.0 ) );
+        let second_player = Player::new( 1, 3, Point::new( 1.0, 4.0 ), Angle::new( 180.0 ) );
+        let mut game = Game::new(
+            Field::new( 5.0, 5.0 ),
+            first_player.clone(),
+            second_player.clone() 
+        );
+        super::pass( &mut game, player_id );
+        assert_eq!( game.events.len(), 0 );
+        assert_eq!( game.frame_idx, 0 );
+        assert_eq!( second_player, game.players[ target_id ] );
+        assert_eq!( 
+            game.players[ player_id ],
+            first_player
+        );
+    }
 }
