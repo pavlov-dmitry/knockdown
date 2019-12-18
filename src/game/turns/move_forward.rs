@@ -3,19 +3,16 @@ use super::EventsBuilder;
 use super::types::{ Id, HALF_BODY_SIZE, BODY_SIZE };
 
 pub fn move_forward<S: GameState + EventsBuilder>( game: &mut S, player_id: Id ) {
+    super::turn_on_target_if_need(game, player_id);
     let player = game.get_player( player_id );
     let target = game.get_player_target( player_id );
-    let angle = player.position.angle_to( &target.position );
     let distance = player.position.distance_to( &target.position );
     // так как точка это только центр бойца, 
     // сам боец представлен в виде круга, знaчит от расстояния надо отнять 
     // по половинке размера каждого бойца
     let distance = distance - HALF_BODY_SIZE * 2.0;
     let distance = distance.max( 0.0 ).min( BODY_SIZE );
-    let new_player_pos = player.position.layout_point( &angle, distance );
-    if angle != player.angle {
-        game.player_rotate(player_id, angle);
-    }
+    let new_player_pos = player.position.layout_point( &player.angle, distance );
     game.player_move_by_line_to( player_id, new_player_pos );
 }
 

@@ -3,13 +3,9 @@ use super::EventsBuilder;
 use super::types::{ Id, HALF_BODY_SIZE };
 
 pub fn move_backward<S: GameState + EventsBuilder>( game: &mut S, player_id: Id ) {
+    super::turn_on_target_if_need(game, player_id);
     let player = game.get_player(player_id);
     let target = game.get_player_target(player_id);
-    let angle_on_target = player.position.angle_to( &target.position );
-    if angle_on_target != player.angle {
-        game.player_rotate(player_id, angle_on_target);
-    }
-    let player = game.get_player(player_id);
     let new_player_position = player.position.layout_point( &player.angle.opposite(), HALF_BODY_SIZE );
     game.player_move_by_line_to(player_id, new_player_position);
 }
