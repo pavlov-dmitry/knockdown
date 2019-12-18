@@ -11,7 +11,14 @@ pub fn move_right<S: GameState + EventsBuilder>( game: &mut S, player_id: Id ) {
 }
 
 fn move_by_circle<S: GameState + EventsBuilder>( game: &mut S, player_id: Id, angle_diff : f32 ) {
-    unimplemented!();
+    super::turn_on_target_if_need(game, player_id);
+    let player = game.get_player(player_id);
+    let rotation_point = player.position.layout_point( &player.angle, BODY_SIZE * 1.5 );
+    game.player_move_by_circle(player_id, rotation_point, angle_diff);
+    //тут всегда должен быть поворот, так как после смещения, игрок никак не может смотреть на
+    //на противника, поэтому in_same_time() можно вызывать спокойно
+    game.in_same_time();
+    super::turn_on_target_if_need(game, player_id);
 }
 
 #[cfg(test)]
@@ -19,7 +26,7 @@ mod tests {
     use super::*;
     use super::super::super::*;
 
-    fn make_values() -> ( Player, Player, Game ) {
+    fn make_game() -> ( Player, Player, Game ) {
         let first_player = Player::new( 0, 3, Point::new( 1.0, 1.0 ), Angle::new( 90.0 ) );
         let second_player = Player::new( 1, 3, Point::new( 1.0, 4.0 ), Angle::new( 180.0 ) );
         let game = Game::new(
@@ -33,10 +40,10 @@ mod tests {
     #[test]
     fn move_left() {
         let player_id = 0;
-        let (first_player, second_player, mut game) = make_values();
+        let (first_player, second_player, mut game) = make_game();
         super::move_left( &mut game, player_id );
         assert_eq!( game.events.len(), 3 );
-        assert_eq!( game.frame_idx, 3 );
+        assert_eq!( game.frame_idx, 2 );
         assert_eq!( second_player, game.players[ 1 ] );
         let updated_player = game.get_player( player_id );
         assert_eq!( 
@@ -47,6 +54,7 @@ mod tests {
                 ..first_player 
             }
         );
+        println!( "{} {}", first_player.position.x, updated_player.position.x );
         assert!( updated_player.position.x < first_player.position.x );
         let div_x = ( first_player.position.x - updated_player.position.x ).abs();
         assert!( BODY_SIZE < div_x );
@@ -60,10 +68,10 @@ mod tests {
     #[test]
     fn move_right() {
         let player_id = 0;
-        let (first_player, second_player, mut game) = make_values();
-        super::move_left( &mut game, player_id );
+        let (first_player, second_player, mut game) = make_game();
+        super::move_right( &mut game, player_id );
         assert_eq!( game.events.len(), 3 );
-        assert_eq!( game.frame_idx, 3 );
+        assert_eq!( game.frame_idx, 2 );
         assert_eq!( second_player, game.players[ 1 ] );
         let updated_player = game.get_player( player_id );
         assert_eq!( 

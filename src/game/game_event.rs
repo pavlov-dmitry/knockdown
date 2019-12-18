@@ -1,6 +1,6 @@
-use super::types::{ Id, Duration, Point, Angle };
-use super::turn::Turn;
 use super::player::Player;
+use super::turn::Turn;
+use super::types::{Angle, Duration, Id, Point};
 use super::Game;
 use std::default::Default;
 
@@ -8,13 +8,13 @@ use std::default::Default;
 #[derive(Debug)]
 pub enum GameEvent {
     /// что-то произошло с игроком
-    PlayerEvent( PlayerEvent ), 
+    PlayerEvent(PlayerEvent),
     /// событие по которому сервер ожидает хода игрока
-    YourTurn, 
+    YourTurn,
     /// подтверждение получения хода
-    TurnAccepted( Turn ), 
+    TurnAccepted(Turn),
     /// конец игры
-    GameOver( GameOver ) 
+    GameOver(GameOver),
 }
 
 /// Действие произошедшее с игроком.
@@ -28,42 +28,42 @@ pub enum GameEvent {
 #[derive(Debug)]
 pub struct PlayerEvent {
     /// идентификатор игрока
-    player_id: Id, 
+    player_id: Id,
     /// изменение которое произошло с игроком
-    action: PlayerDiff, 
+    action: PlayerDiff,
     /// индекс временного окна этого изменения
-    time_frame_idx: usize, 
+    time_frame_idx: usize,
     /// пауза перед началом этого изменения
-    pause_before_start: Duration, 
+    pause_before_start: Duration,
     /// относительное время во временном окне
-    duration: Duration, 
+    duration: Duration,
 }
 
 /// Изменения которые произошли с игроком
 #[derive(Debug)]
 enum PlayerDiff {
-    MoveTo( Point ),
+    MoveTo(Point),
     MoveByCircle(MoveByCircle),
-    RotateTo( Angle ),
+    RotateTo(Angle),
     StraightHitLeft,
     StraightHitRight,
     HookHitLeft,
     HookHitRight,
     /// переход в состояние побитого
-    BeatenState, 
+    BeatenState,
     /// изменение в кол-ве жизней
-    HitPoints( u8 ) 
+    HitPoints(u8),
 }
 
 #[derive(Debug)]
 struct MoveByCircle {
     rotation_point: Point,
-    angle_diff: f32
+    angle_diff: f32,
 }
 
 #[derive(Debug)]
 struct GameOver {
-    winner_player_id: Id
+    winner_player_id: Id,
 }
 
 impl Default for PlayerEvent {
@@ -73,7 +73,7 @@ impl Default for PlayerEvent {
             action: PlayerDiff::BeatenState,
             time_frame_idx: 0,
             pause_before_start: 0.0,
-            duration: 1.0
+            duration: 1.0,
         }
     }
 }
@@ -81,67 +81,95 @@ impl Default for PlayerEvent {
 /// Типаж изменения состояния игры
 pub trait EventsBuilder {
     /// говорит что следующее действие происходит в то же время что и предыдущее
-    fn in_same_time( &mut self ) -> &mut Self;
+    fn in_same_time(&mut self) -> &mut Self;
     /// повернуть игрока так чтобы он смотрел по определённому углу
-    fn player_rotate( &mut self, player_id: Id, azimuth: Angle ) -> &mut Self;
+    fn player_rotate(&mut self, player_id: Id, azimuth: Angle) -> &mut Self;
     /// игрок передвигается по прямой в определённую точку
-    fn player_move_by_line_to( &mut self, player_id: Id, pos: Point ) -> &mut Self;
+    fn player_move_by_line_to(&mut self, player_id: Id, pos: Point) -> &mut Self;
+    /// игрок передвигается по кругу
+    fn player_move_by_circle(
+        &mut self,
+        player_id: Id,
+        rotation_point: Point,
+        angle_diff: f32,
+    ) -> &mut Self;
     /// задать скорость изменения предыдущего действия
-    fn with_speed( &mut self, speed: Duration ) -> &mut Self;
+    fn with_speed(&mut self, speed: Duration) -> &mut Self;
     /// задать паузу которую нужно выдержать в этом фрейме событий
-    fn with_pause( &mut self, pause: Duration ) -> &mut Self;
+    fn with_pause(&mut self, pause: Duration) -> &mut Self;
 }
 
 impl EventsBuilder for Game {
-    fn in_same_time( &mut self ) -> &mut Self {
+    fn in_same_time(&mut self) -> &mut Self {
         self.next_action_in_parallel_flag = true;
         self
     }
 
-    fn with_speed( &mut self, speed: Duration ) -> &mut Self {
-        self.change_last_player_event( |e| e.duration = speed );
+    fn with_speed(&mut self, speed: Duration) -> &mut Self {
+        self.change_last_player_event(|e| e.duration = speed);
         self
     }
 
-    fn with_pause( &mut self, pause: Duration ) -> &mut Self {
-        self.change_last_player_event( |e| e.pause_before_start = pause );
+    fn with_pause(&mut self, pause: Duration) -> &mut Self {
+        self.change_last_player_event(|e| e.pause_before_start = pause);
         self
     }
 
-    fn player_rotate( &mut self, player_id: Id, azimuth: Angle ) -> &mut Self {
-        self.add_player_event( 
-            player_id,
-            PlayerDiff::RotateTo( azimuth.clone() )
-        );
-        self.players[ player_id ].angle = azimuth;
+    fn player_rotate(&mut self, player_id: Id, azimuth: Angle) -> &mut Self {
+        self.add_player_event(player_id, PlayerDiff::RotateTo(azimuth.clone()));
+        self.players[player_id].angle = azimuth;
         self
     }
 
-    fn player_move_by_line_to( &mut self, player_id: Id, pos: Point ) -> &mut Self {
+    fn player_move_by_line_to(&mut self, player_id: Id, pos: Point) -> &mut Self {
+        self.add_player_event(player_id, PlayerDiff::MoveTo(pos.clone()));
+        self.players[player_id].position = pos;
+        self
+    }
+
+    fn player_move_by_circle(
+        &mut self,
+        player_id: Id,
+        rotation_point: Point,
+        angle_diff: f32,
+    ) -> &mut Self {
         self.add_player_event(
             player_id,
-            PlayerDiff::MoveTo( pos.clone() )
+            PlayerDiff::MoveByCircle(MoveByCircle {
+                rotation_point: rotation_point.clone(),
+                angle_diff,
+            }),
         );
-        self.players[ player_id ].position = pos;
+        let player = &mut self.players[player_id];
+        let angle_on_player = rotation_point.angle_to(&player.position);
+        let angle_on_new_player_position = angle_on_player + angle_diff;
+        let distance_to_player = rotation_point.distance_to(&player.position);
+        player.position = rotation_point.layout_point(
+            &angle_on_new_player_position, 
+            distance_to_player
+        );
         self
     }
 }
 
 impl Game {
-    fn change_last_player_event<F>( &mut self, f: F ) where F : Fn(&mut PlayerEvent) {
-        if let Some( event ) = self.events.last_mut() {
-            if let GameEvent::PlayerEvent( event ) = event {
-                f( event );
+    fn change_last_player_event<F>(&mut self, f: F)
+    where
+        F: Fn(&mut PlayerEvent),
+    {
+        if let Some(event) = self.events.last_mut() {
+            if let GameEvent::PlayerEvent(event) = event {
+                f(event);
             }
         }
     }
 
-    fn add_player_event( &mut self, player_id: Id, action: PlayerDiff ) {
-        if !self.next_action_in_parallel_flag { 
+    fn add_player_event(&mut self, player_id: Id, action: PlayerDiff) {
+        if !self.next_action_in_parallel_flag {
             self.frame_idx += 1;
-        } 
+        }
         self.next_action_in_parallel_flag = false;
-        self.events.push(GameEvent::PlayerEvent( PlayerEvent{
+        self.events.push(GameEvent::PlayerEvent(PlayerEvent {
             player_id,
             action,
             time_frame_idx: self.frame_idx,
