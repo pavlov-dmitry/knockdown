@@ -58,7 +58,7 @@ enum PlayerDiff {
 #[derive(Debug)]
 struct MoveByCircle {
     rotation_point: Point,
-    angle: Angle
+    angle_diff: f32
 }
 
 #[derive(Debug)]

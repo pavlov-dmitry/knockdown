@@ -11,3 +11,7 @@ pub use pass::pass;
 
 mod move_backward;
 pub use move_backward::move_backward;
+
+mod move_by_circle;
+pub use move_by_circle::move_left;
+pub use move_by_circle::move_right;

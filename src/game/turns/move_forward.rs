@@ -8,7 +8,7 @@ pub fn move_forward<S: GameState + EventsBuilder>( game: &mut S, player_id: Id )
     let angle = player.position.angle_to( &target.position );
     let distance = player.position.distance_to( &target.position );
     // так как точка это только центр бойца, 
-    // сам боец представлен в виде круга, занчит от расстояния надо отнять 
+    // сам боец представлен в виде круга, знaчит от расстояния надо отнять 
     // по половинке размера каждого бойца
     let distance = distance - HALF_BODY_SIZE * 2.0;
     let distance = distance.max( 0.0 ).min( BODY_SIZE );
