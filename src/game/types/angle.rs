@@ -29,6 +29,10 @@ impl Angle {
         let Angle( val ) = self;
         val.to_radians().cos()
     }
+
+    pub fn opposite( &self ) -> Angle {
+        self.clone() + 180.0
+    }
 }
 
 impl Add<f32> for Angle {
