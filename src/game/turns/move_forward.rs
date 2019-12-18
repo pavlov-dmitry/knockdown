@@ -1,6 +1,6 @@
 use super::GameState;
 use super::EventsBuilder;
-use super::types::{ Id, HALF_BODY_SIZE };
+use super::types::{ Id, HALF_BODY_SIZE, BODY_SIZE };
 
 pub fn move_forward<S: GameState + EventsBuilder>( game: &mut S, player_id: Id ) {
     let player = game.get_player( player_id );
@@ -11,7 +11,7 @@ pub fn move_forward<S: GameState + EventsBuilder>( game: &mut S, player_id: Id )
     // сам боец представлен в виде круга, занчит от расстояния надо отнять 
     // по половинке размера каждого бойца
     let distance = distance - HALF_BODY_SIZE * 2.0;
-    let distance = distance.max( 0.0 ).min( 1.0 );
+    let distance = distance.max( 0.0 ).min( BODY_SIZE );
     let new_player_pos = player.position.layout_point( &angle, distance );
     if angle != player.angle {
         game.player_rotate(player_id, angle);
