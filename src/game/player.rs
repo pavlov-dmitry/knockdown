@@ -1,9 +1,10 @@
-use super::types::{Angle, Id, Point};
+use super::types::{Angle, HitPoints, Id, Point};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Player {
     pub user_id: Id,
-    pub hit_points: u8,
+    pub hit_points: HitPoints,
+    pub max_hit_points: HitPoints,
     pub position: Point,
     pub angle: Angle,
 }
@@ -13,16 +14,9 @@ impl Player {
         Player {
             user_id,
             hit_points,
+            max_hit_points: hit_points,
             position,
             angle,
         }
-    }
-
-    pub fn change_pos(&mut self, new_position: Point) {
-        self.position = new_position;
-    }
-
-    pub fn change_angle(&mut self, new_angle: Angle) {
-        self.angle = new_angle;
     }
 }

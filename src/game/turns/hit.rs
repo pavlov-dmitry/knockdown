@@ -37,8 +37,15 @@ where
         game.in_same_time()
             .set_player_beaten(target_id)
             .in_same_time()
-            .player_move_by_line_to(new_target_position);
+            .player_move_by_line_to(new_target_position)
+            .in_same_time()
+            .set_player_hitpoints(target.hit_points - 1);
         super::turn_on_target_if_need(game, target_id, true);
+
+        let target = game.get_player_target(target_id);
+        if target.hit_points == 0 {
+            game.game_over(player_id);
+        }
     }
 }
 

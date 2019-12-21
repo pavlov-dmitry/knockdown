@@ -1,6 +1,6 @@
 use super::player::Player;
 use super::turn::Turn;
-use super::types::{Angle, Duration, Id, Point};
+use super::types::{Angle, Duration, HitPoints, Id, Point};
 use super::Game;
 use std::default::Default;
 
@@ -48,7 +48,7 @@ enum PlayerDiff {
     /// переход в состояние побитого
     BeatenState,
     /// изменение в кол-ве жизней
-    HitPoints(u8),
+    HitPoints(HitPoints),
 }
 
 #[derive(Debug)]
@@ -88,6 +88,10 @@ pub trait EventsBuilder {
     fn player_hit_hook_right(&mut self, player_id: Id) -> &mut Self;
     /// переводит игрока в состояние побитого
     fn set_player_beaten(&mut self, player_id: Id) -> &mut Self;
+    /// устанавливаем кол-во жизней игрока
+    fn set_player_hitpoints(&mut self, player_id: Id, hitpoint: HitPoints) -> &mut Self;
+    /// конец игры
+    fn game_over(&mut self, winner_id: Id) -> &mut Self;
 }
 
 impl EventsBuilder for Game {
@@ -131,44 +135,41 @@ impl EventsBuilder for Game {
     }
 
     fn set_player_beaten(&mut self, player_id: Id) -> &mut Self {
-        self.add_player_event(player_id, PlayerDiff::BeatenState);
-        self
+        self.add_player_event(player_id, PlayerDiff::BeatenState)
     }
 
     fn player_hit_straight_left(&mut self, player_id: Id) -> &mut Self {
-        self.add_player_event(player_id, PlayerDiff::StraightHitLeft);
-        self
+        self.add_player_event(player_id, PlayerDiff::StraightHitLeft)
     }
 
     fn player_hit_straight_right(&mut self, player_id: Id) -> &mut Self {
-        self.add_player_event(player_id, PlayerDiff::StraightHitRight);
-        self
+        self.add_player_event(player_id, PlayerDiff::StraightHitRight)
     }
 
     fn player_hit_hook_left(&mut self, player_id: Id) -> &mut Self {
-        self.add_player_event(player_id, PlayerDiff::HookHitLeft);
-        self
+        self.add_player_event(player_id, PlayerDiff::HookHitLeft)
     }
 
     fn player_hit_hook_right(&mut self, player_id: Id) -> &mut Self {
-        self.add_player_event(player_id, PlayerDiff::HookHitRight);
+        self.add_player_event(player_id, PlayerDiff::HookHitRight)
+    }
+
+    fn set_player_hitpoints(&mut self, player_id: Id, hitpoints: HitPoints) -> &mut Self {
+        self.players[player_id].hit_points = hitpoints;
+        self.add_player_event(player_id, PlayerDiff::HitPoints(hitpoints))
+    }
+
+    fn game_over(&mut self, winner_id: Id) -> &mut Self {
+        self.events.push(GameEvent::GameOver(GameOver {
+            winner_player_id: winner_id,
+        }));
+        self.game_over = true;
         self
     }
 }
 
 impl Game {
-    fn change_last_player_event<F>(&mut self, f: F)
-    where
-        F: Fn(&mut PlayerEvent),
-    {
-        if let Some(event) = self.events.last_mut() {
-            if let GameEvent::PlayerEvent(event) = event {
-                f(event);
-            }
-        }
-    }
-
-    fn add_player_event(&mut self, player_id: Id, action: PlayerDiff) {
+    fn add_player_event(&mut self, player_id: Id, action: PlayerDiff) -> &mut Self {
         if !self.next_action_in_parallel_flag {
             self.frame_idx += 1;
         }
@@ -178,5 +179,6 @@ impl Game {
             action,
             time_frame_idx: self.frame_idx,
         }));
+        self
     }
 }

@@ -20,6 +20,7 @@ struct Game {
     events: Vec<GameEvent>,
     frame_idx: usize,
     next_action_in_parallel_flag: bool,
+    game_over: bool,
 }
 
 impl Game {
@@ -30,6 +31,7 @@ impl Game {
             events: Vec::new(),
             frame_idx: 0,
             next_action_in_parallel_flag: false,
+            game_over: false,
         }
     }
 }

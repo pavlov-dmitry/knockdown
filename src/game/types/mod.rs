@@ -1,6 +1,7 @@
 pub type Duration = f32;
 pub type Distance = f32;
 pub type Id = usize;
+pub type HitPoints = u8;
 
 pub const BODY_SIZE: Distance = 1.0;
 pub const HALF_BODY_SIZE: Distance = BODY_SIZE / 2.0;
