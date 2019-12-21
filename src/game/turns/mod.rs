@@ -15,6 +15,9 @@ mod move_by_circle;
 pub use move_by_circle::move_left;
 pub use move_by_circle::move_right;
 
+mod back_to_the_ring;
+pub use back_to_the_ring::back_to_the_ring;
+
 pub fn turn_on_target_if_need<S: GameState + EventsBuilder>( game: &mut S, player_id: Id ) {
     let player = game.get_player(player_id);
     let target = game.get_player_target(player_id);
