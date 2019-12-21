@@ -33,9 +33,9 @@ impl Point {
 }
 
 impl PartialEq for Point {
-    fn eq( &self, other: &Self ) -> bool {
-        let div_x = ( self.x - other.x ).abs();
-        let div_y = ( self.y - other.y ).abs();
+    fn eq(&self, other: &Self) -> bool {
+        let div_x = (self.x - other.x).abs();
+        let div_y = (self.y - other.y).abs();
         div_x <= std::f32::EPSILON && div_y <= std::f32::EPSILON
     }
 }
@@ -68,25 +68,25 @@ mod tests {
     fn layout_point() {
         let pnt = Point::new(0.0, 0.0);
         let soft_compare = |p1: Point, p2: Point| {
-            let x_ok = ( p1.x - p2.x ).abs() < 0.001;
-            let y_ok = ( p1.y - p2.y ).abs() < 0.001;
-            assert!( x_ok && y_ok )
+            let x_ok = (p1.x - p2.x).abs() < 0.001;
+            let y_ok = (p1.y - p2.y).abs() < 0.001;
+            assert!(x_ok && y_ok)
         };
-        soft_compare( 
-            pnt.layout_point(&Angle::new(90.0), 10.0), 
-            Point::new(10.0, 0.0)
+        soft_compare(
+            pnt.layout_point(&Angle::new(90.0), 10.0),
+            Point::new(10.0, 0.0),
         );
-        soft_compare( 
+        soft_compare(
             pnt.layout_point(&Angle::new(0.0), 20.0),
-            Point::new(0.0, 20.0)
+            Point::new(0.0, 20.0),
         );
-        soft_compare( 
+        soft_compare(
             pnt.layout_point(&Angle::new(180.0), 30.0),
-            Point::new(0.0, -30.0)
+            Point::new(0.0, -30.0),
         );
-        soft_compare( 
+        soft_compare(
             pnt.layout_point(&Angle::new(270.0), 40.0),
-            Point::new(-40.0, 0.0)
+            Point::new(-40.0, 0.0),
         );
     }
 }

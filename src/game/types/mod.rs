@@ -1,4 +1,3 @@
-
 pub type Duration = f32;
 pub type Distance = f32;
 pub type Id = usize;

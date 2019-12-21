@@ -144,10 +144,8 @@ impl EventsBuilder for Game {
         let angle_on_player = rotation_point.angle_to(&player.position);
         let angle_on_new_player_position = angle_on_player + angle_diff;
         let distance_to_player = rotation_point.distance_to(&player.position);
-        player.position = rotation_point.layout_point(
-            &angle_on_new_player_position, 
-            distance_to_player
-        );
+        player.position =
+            rotation_point.layout_point(&angle_on_new_player_position, distance_to_player);
         self
     }
 }

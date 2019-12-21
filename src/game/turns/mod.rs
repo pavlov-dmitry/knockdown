@@ -21,13 +21,13 @@ pub use back_to_the_ring::back_to_the_ring;
 pub fn turn_on_target_if_need<S: GameState + EventsBuilder>(
     game: &mut S,
     player_id: Id,
-    in_same_time: bool
+    in_same_time: bool,
 ) {
     let player = game.get_player(player_id);
     let target = game.get_player_target(player_id);
     let angle_on_target = player.position.angle_to(&target.position);
     if player.angle != angle_on_target {
-        if ( in_same_time ) {
+        if (in_same_time) {
             game.in_same_time();
         }
         game.player_rotate(player_id, angle_on_target);

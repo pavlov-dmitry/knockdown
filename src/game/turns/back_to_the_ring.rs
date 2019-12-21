@@ -1,4 +1,4 @@
-use super::types::{Id, HALF_BODY_SIZE, BODY_SIZE, Point};
+use super::types::{Id, Point, BODY_SIZE, HALF_BODY_SIZE};
 use super::EventsBuilder;
 use super::GameState;
 
@@ -20,17 +20,17 @@ pub fn back_to_the_ring<G: GameState + EventsBuilder>(game: &mut G, player_id: I
         // при возвращении  ринг, боксёр отталкивает противника если тот ему мешает вернуться
         let player = game.get_player(player_id);
         let target = game.get_player_target(player_id);
-        let distance_to_target = player.position.distance_to( &target.position );
-        println!( "distance_to_target: {}", distance_to_target );
+        let distance_to_target = player.position.distance_to(&target.position);
+        println!("distance_to_target: {}", distance_to_target);
         if distance_to_target < BODY_SIZE {
-            let angle = player.position.angle_to( &target.position );
-            let new_target_position = player.position.layout_point( &angle, BODY_SIZE );
+            let angle = player.position.angle_to(&target.position);
+            let new_target_position = player.position.layout_point(&angle, BODY_SIZE);
             let target_id = game.get_player_target_id(player_id);
             game.in_same_time()
-                .player_move_by_line_to( target_id, new_target_position );
+                .player_move_by_line_to(target_id, new_target_position);
         }
 
-        super::turn_on_target_if_need( game, player_id, true );
+        super::turn_on_target_if_need(game, player_id, true);
     }
 }
 
@@ -99,7 +99,7 @@ mod tests {
             game.players[0],
             Player {
                 position: Point::new(1.0, 5.0 - HALF_BODY_SIZE),
-                angle: Angle::new( 0.0 ),
+                angle: Angle::new(0.0),
                 ..first_player
             }
         );

@@ -2,21 +2,21 @@
 #[derive(Debug)]
 pub enum Turn {
     /// пропуск хода
-    Pass, 
+    Pass,
     /// движение вперёд
-    MoveForward, 
+    MoveForward,
     /// движение назад
-    MoveBackward, 
+    MoveBackward,
     /// обойти слева
-    MoveLeft, 
+    MoveLeft,
     /// обойти справа
-    MoveRight, 
+    MoveRight,
     /// прямой удар правой рукой
-    HitStraightRight, 
+    HitStraightRight,
     /// прямой удар левой рукой
-    HitStraightLeft, 
+    HitStraightLeft,
     /// удар хуком правой рукой
-    HitHookRight, 
+    HitHookRight,
     /// удар хуком левой рукой
-    HitHookLeft 
+    HitHookLeft,
 }
