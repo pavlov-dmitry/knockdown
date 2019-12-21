@@ -41,7 +41,16 @@ impl Add<f32> for Angle {
     fn add(self, other: f32) -> Self::Output {
         let Angle(val) = self;
         let val = val + other;
-        Angle(val).normalize()
+        Angle::new(val)
+    }
+}
+
+impl Sub<Angle> for Angle {
+    type Output = Angle;
+    fn sub(self, other: Angle) -> Self::Output {
+        let Angle(val) = self;
+        let Angle(other_val) = other;
+        Angle::new(val - other_val)
     }
 }
 
@@ -51,13 +60,13 @@ impl Sub<f32> for Angle {
     fn sub(self, other: f32) -> Self::Output {
         let Angle(val) = self;
         let val = val - other;
-        Angle(val).normalize()
+        Angle::new(val)
     }
 }
 
 impl From<f32> for Angle {
     fn from(val: f32) -> Angle {
-        Angle(val).normalize()
+        Angle::new(val)
     }
 }
 

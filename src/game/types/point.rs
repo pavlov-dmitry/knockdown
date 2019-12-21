@@ -12,12 +12,14 @@ impl Point {
         Point { x, y }
     }
 
+    /// расчитывает угол до другой точки
     pub fn angle_to(&self, to: &Point) -> Angle {
         let a = to.x - self.x;
         let b = to.y - self.y;
         Angle::from_radians(a.atan2(b))
     }
 
+    /// расчитывает расстояние до другой точки
     pub fn distance_to(&self, to: &Point) -> Distance {
         let div_x = to.x - self.x;
         let div_y = to.y - self.y;
@@ -25,10 +27,23 @@ impl Point {
         distance
     }
 
+    /// расчитвает точку на определённом расстония и под определённым углос от этой
     pub fn layout_point(&self, angle: &Angle, distance: Distance) -> Point {
         let x = self.x + angle.sin() * distance;
         let y = self.y + angle.cos() * distance;
         Point::new(x, y)
+    }
+
+    /// расчитывает местоположение данной точки относительно другой точки,
+    /// с учётом что ось наклонена под определённым углом.
+    /// Можно представить себе что ось координат переносится в переданную точку, и поворачивается
+    /// под определённым углом, и после этого возвращается координата точки от этой оси.
+    pub fn translate_to(self, angle: Angle, point: Point) -> Point {
+        let angle_to_me = point.angle_to(&self);
+        let distance = point.distance_to(&self);
+        let new_angle = angle_to_me - angle;
+        let zero_point = Point::new(0.0, 0.0);
+        zero_point.layout_point(&new_angle, distance)
     }
 }
 
@@ -88,5 +103,15 @@ mod tests {
             pnt.layout_point(&Angle::new(270.0), 40.0),
             Point::new(-40.0, 0.0),
         );
+    }
+
+    #[test]
+    fn translate_to() {
+        let pnt = Point::new(3.0, 3.0);
+        let pnt = pnt.translate_to(Angle::new(0.0), Point::new(1.0, 1.0));
+        assert_eq!(pnt, Point::new(2.0, 2.0));
+
+        let pnt = pnt.translate_to(Angle::new(45.0), Point::new(1.0, 1.0));
+        assert_eq!(pnt, Point::new(0.0, 2.0_f32.sqrt()));
     }
 }
