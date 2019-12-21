@@ -93,6 +93,18 @@ pub trait EventsBuilder {
         rotation_point: Point,
         angle_diff: f32,
     ) -> &mut Self;
+
+    /// игрок ударил прямым слева
+    fn player_hit_straight_left(&mut self, player_id: Id) -> &mut Self;
+    /// игрок ударил прямым справа
+    fn player_hit_straight_right(&mut self, player_id: Id) -> &mut Self;
+    /// игрок ударил хуком слева
+    fn player_hit_hook_left(&mut self, player_id: Id) -> &mut Self;
+    /// игрок ударил хуком справа
+    fn player_hit_hook_right(&mut self, player_id: Id) -> &mut Self;
+    /// переводит игрока в состояние побитого
+    fn set_player_beaten(&mut self, player_id: Id) -> &mut Self;
+
     /// задать скорость изменения предыдущего действия
     fn with_speed(&mut self, speed: Duration) -> &mut Self;
     /// задать паузу которую нужно выдержать в этом фрейме событий
@@ -146,6 +158,31 @@ impl EventsBuilder for Game {
         let distance_to_player = rotation_point.distance_to(&player.position);
         player.position =
             rotation_point.layout_point(&angle_on_new_player_position, distance_to_player);
+        self
+    }
+
+    fn set_player_beaten(&mut self, player_id: Id) -> &mut Self {
+        self.add_player_event(player_id, PlayerDiff::BeatenState);
+        self
+    }
+
+    fn player_hit_straight_left(&mut self, player_id: Id) -> &mut Self {
+        self.add_player_event(player_id, PlayerDiff::StraightHitLeft);
+        self
+    }
+
+    fn player_hit_straight_right(&mut self, player_id: Id) -> &mut Self {
+        self.add_player_event(player_id, PlayerDiff::StraightHitRight);
+        self
+    }
+
+    fn player_hit_hook_left(&mut self, player_id: Id) -> &mut Self {
+        self.add_player_event(player_id, PlayerDiff::HookHitLeft);
+        self
+    }
+
+    fn player_hit_hook_right(&mut self, player_id: Id) -> &mut Self {
+        self.add_player_event(player_id, PlayerDiff::HookHitRight);
         self
     }
 }
