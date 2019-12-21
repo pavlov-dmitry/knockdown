@@ -33,10 +33,6 @@ pub struct PlayerEvent {
     action: PlayerDiff,
     /// индекс временного окна этого изменения
     time_frame_idx: usize,
-    /// пауза перед началом этого изменения
-    pause_before_start: Duration,
-    /// относительное время во временном окне
-    duration: Duration,
 }
 
 /// Изменения которые произошли с игроком
@@ -66,18 +62,6 @@ struct GameOver {
     winner_player_id: Id,
 }
 
-impl Default for PlayerEvent {
-    fn default() -> Self {
-        PlayerEvent {
-            player_id: 0,
-            action: PlayerDiff::BeatenState,
-            time_frame_idx: 0,
-            pause_before_start: 0.0,
-            duration: 1.0,
-        }
-    }
-}
-
 /// Типаж изменения состояния игры
 pub trait EventsBuilder {
     /// говорит что следующее действие происходит в то же время что и предыдущее
@@ -104,26 +88,11 @@ pub trait EventsBuilder {
     fn player_hit_hook_right(&mut self, player_id: Id) -> &mut Self;
     /// переводит игрока в состояние побитого
     fn set_player_beaten(&mut self, player_id: Id) -> &mut Self;
-
-    /// задать скорость изменения предыдущего действия
-    fn with_speed(&mut self, speed: Duration) -> &mut Self;
-    /// задать паузу которую нужно выдержать в этом фрейме событий
-    fn with_pause(&mut self, pause: Duration) -> &mut Self;
 }
 
 impl EventsBuilder for Game {
     fn in_same_time(&mut self) -> &mut Self {
         self.next_action_in_parallel_flag = true;
-        self
-    }
-
-    fn with_speed(&mut self, speed: Duration) -> &mut Self {
-        self.change_last_player_event(|e| e.duration = speed);
-        self
-    }
-
-    fn with_pause(&mut self, pause: Duration) -> &mut Self {
-        self.change_last_player_event(|e| e.pause_before_start = pause);
         self
     }
 
@@ -208,7 +177,6 @@ impl Game {
             player_id,
             action,
             time_frame_idx: self.frame_idx,
-            ..Default::default()
         }));
     }
 }
