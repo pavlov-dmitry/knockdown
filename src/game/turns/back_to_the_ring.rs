@@ -30,8 +30,7 @@ pub fn back_to_the_ring<G: GameState + EventsBuilder>(game: &mut G, player_id: I
                 .player_move_by_line_to( target_id, new_target_position );
         }
 
-        game.in_same_time();
-        super::turn_on_target_if_need( game, player_id );
+        super::turn_on_target_if_need( game, player_id, true );
     }
 }
 

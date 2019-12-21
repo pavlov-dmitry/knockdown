@@ -11,14 +11,11 @@ pub fn move_right<S: GameState + EventsBuilder>( game: &mut S, player_id: Id ) {
 }
 
 fn move_by_circle<S: GameState + EventsBuilder>( game: &mut S, player_id: Id, angle_diff : f32 ) {
-    super::turn_on_target_if_need(game, player_id);
+    super::turn_on_target_if_need(game, player_id, false);
     let player = game.get_player(player_id);
     let rotation_point = player.position.layout_point( &player.angle, BODY_SIZE * 1.5 );
     game.player_move_by_circle(player_id, rotation_point, angle_diff);
-    //тут всегда должен быть поворот, так как после смещения, игрок никак не может смотреть на
-    //на противника, поэтому in_same_time() можно вызывать спокойно
-    game.in_same_time();
-    super::turn_on_target_if_need(game, player_id);
+    super::turn_on_target_if_need(game, player_id, true);
 }
 
 #[cfg(test)]
