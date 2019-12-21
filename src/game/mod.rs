@@ -34,19 +34,21 @@ impl Game {
     }
 }
 
-fn make_turn<S>(state: &mut S, player: Id, turn: Turn)
+fn make_turn<G>(game: &mut G, player: Id, turn: Turn)
 where
-    S: GameState + EventsBuilder,
+    G: GameState + EventsBuilder,
 {
     match turn {
-        Turn::MoveForward => turns::move_forward(state, player),
-        Turn::MoveBackward => unimplemented!(),
-        Turn::MoveLeft => unimplemented!(),
-        Turn::MoveRight => unimplemented!(),
-        Turn::Pass => turns::pass(state, player),
+        Turn::MoveForward => turns::move_forward(game, player),
+        Turn::MoveBackward => turns::move_backward(game, player),
+        Turn::MoveLeft => turns::move_left(game, player),
+        Turn::MoveRight => turns::move_right(game, player),
+        Turn::Pass => turns::pass(game, player),
         Turn::HitStraightLeft => unimplemented!(),
         Turn::HitStraightRight => unimplemented!(),
         Turn::HitHookLeft => unimplemented!(),
         Turn::HitHookRight => unimplemented!(),
     }
+    turns::back_to_the_ring(game, 0);
+    turns::back_to_the_ring(game, 1);
 }
