@@ -53,4 +53,16 @@ where
     }
     turns::back_to_the_ring(game, 0);
     turns::back_to_the_ring(game, 1);
+    check_on_knockout(game, 0);
+    check_on_knockout(game, 1);
+}
+
+fn check_on_knockout<G>(game: &mut G, player_id: Id)
+where
+    G: GameState + EventsBuilder,
+{
+    let player = game.get_player(player_id);
+    if player.hit_points == 0 {
+        game.game_over(game.get_player_target_id(player_id));
+    }
 }

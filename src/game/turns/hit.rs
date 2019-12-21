@@ -32,20 +32,17 @@ where
     super::turn_on_target_if_need(game, player_id, false);
     if hit_check(player.position, player.angle, target.position) {
         let target_id = game.get_player_target_id(player_id);
+        /// после получения удара, цель отлетает от игрока который его ударил
         let angle = target.position.angle_to(player.position).opposite();
         let new_target_position = target.position.layout_point(angle, BODY_SIZE * 2);
+
         game.in_same_time()
             .set_player_beaten(target_id)
             .in_same_time()
-            .player_move_by_line_to(new_target_position)
+            .set_player_hitpoints(target.hit_points - 1)
             .in_same_time()
-            .set_player_hitpoints(target.hit_points - 1);
+            .player_move_by_line_to(new_target_position);
         super::turn_on_target_if_need(game, target_id, true);
-
-        let target = game.get_player_target(target_id);
-        if target.hit_points == 0 {
-            game.game_over(player_id);
-        }
     }
 }
 
