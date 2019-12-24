@@ -46,15 +46,17 @@ where
         Turn::MoveLeft => turns::move_left(game, player),
         Turn::MoveRight => turns::move_right(game, player),
         Turn::Pass => turns::pass(game, player),
-        Turn::HitStraightLeft => unimplemented!(),
-        Turn::HitStraightRight => unimplemented!(),
-        Turn::HitHookLeft => unimplemented!(),
-        Turn::HitHookRight => unimplemented!(),
+        Turn::HitStraightLeft => turns::hit_straight_left(game, player),
+        Turn::HitStraightRight => turns::hit_straight_right(game, player),
+        Turn::HitHookLeft => turns::hit_hook_left(game, player),
+        Turn::HitHookRight => turns::hit_hook_right(game, player),
     }
-    turns::back_to_the_ring(game, 0);
-    turns::back_to_the_ring(game, 1);
-    check_on_knockout(game, 0);
-    check_on_knockout(game, 1);
+    const FIRST_PLAYER_ID: Id = 0;
+    const SECOND_PLAYER_ID: Id = 1;
+    turns::back_to_the_ring(game, FIRST_PLAYER_ID);
+    turns::back_to_the_ring(game, SECOND_PLAYER_ID);
+    check_on_knockout(game, FIRST_PLAYER_ID);
+    check_on_knockout(game, SECOND_PLAYER_ID);
 }
 
 fn check_on_knockout<G>(game: &mut G, player_id: Id)
