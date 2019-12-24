@@ -18,6 +18,12 @@ pub use move_by_circle::move_right;
 mod back_to_the_ring;
 pub use back_to_the_ring::back_to_the_ring;
 
+mod hit;
+pub use hit::hit_hook_left;
+pub use hit::hit_hook_right;
+pub use hit::hit_straight_left;
+pub use hit::hit_straight_right;
+
 pub fn turn_on_target_if_need<S: GameState + EventsBuilder>(
     game: &mut S,
     player_id: Id,

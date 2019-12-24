@@ -1,7 +1,7 @@
 use std::convert::From;
 use std::ops::{Add, Sub};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct Angle(pub f32);
 
 impl Angle {

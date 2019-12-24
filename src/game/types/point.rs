@@ -38,9 +38,9 @@ impl Point {
     /// с учётом что ось наклонена под определённым углом.
     /// Можно представить себе что ось координат переносится в переданную точку, и поворачивается
     /// под определённым углом, и после этого возвращается координата точки от этой оси.
-    pub fn translate_to(self, angle: Angle, point: Point) -> Point {
-        let angle_to_me = point.angle_to(&self);
-        let distance = point.distance_to(&self);
+    pub fn translate_to(&self, angle: Angle, point: Point) -> Point {
+        let angle_to_me = point.angle_to(self);
+        let distance = point.distance_to(self);
         let new_angle = angle_to_me - angle;
         let zero_point = Point::new(0.0, 0.0);
         zero_point.layout_point(&new_angle, distance)
