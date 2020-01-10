@@ -64,7 +64,7 @@ where
     G: GameState + EventsBuilder,
 {
     let player = game.get_player(player_id);
-    if player.hit_points == 0 {
+    if player.hit_points <= 0 {
         game.game_over(game.get_player_target_id(player_id));
     }
 }
