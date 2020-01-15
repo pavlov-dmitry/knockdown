@@ -24,8 +24,8 @@ mod tests {
     use super::*;
 
     fn make_game() -> (Player, Player, Game) {
-        let first_player = Player::new(0, 3, Point::new(1.0, 1.0), Angle::new(90.0));
-        let second_player = Player::new(1, 3, Point::new(1.0, 4.0), Angle::new(180.0));
+        let first_player = Player::new(3, Point::new(1.0, 1.0), Angle::new(90.0));
+        let second_player = Player::new(3, Point::new(1.0, 4.0), Angle::new(180.0));
         let game = Game::new(
             Field::new(5.0, 5.0),
             first_player.clone(),

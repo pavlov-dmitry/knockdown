@@ -41,14 +41,14 @@ mod tests {
     use super::*;
 
     fn make_game(first_player: Player) -> (Player, Game) {
-        let second_player = Player::new(1, 3, Point::new(1.0, 4.5), Angle::new(180.0));
+        let second_player = Player::new(3, Point::new(1.0, 4.5), Angle::new(180.0));
         let game = Game::new(Field::new(5.0, 5.0), first_player, second_player.clone());
         (second_player, game)
     }
 
     #[test]
     fn no_return() {
-        let first_player = Player::new(0, 3, Point::new(1.0, 1.0), Angle::new(0.0));
+        let first_player = Player::new(3, Point::new(1.0, 1.0), Angle::new(0.0));
         let (second_player, mut game) = make_game(first_player.clone());
         super::back_to_the_ring(&mut game, 0);
         assert_eq!(game.events.len(), 0);
@@ -58,7 +58,7 @@ mod tests {
     }
 
     fn check_simple_return(first_player: Player) {
-        let second_player = Player::new(1, 3, Point::new(2.5, 2.5), Angle::new(180.0));
+        let second_player = Player::new(3, Point::new(2.5, 2.5), Angle::new(180.0));
         let mut game = Game::new(Field::new(5.0, 5.0), first_player, second_player.clone());
         super::back_to_the_ring(&mut game, 0);
         assert_eq!(game.events.len(), 2);
@@ -78,19 +78,19 @@ mod tests {
 
     #[test]
     fn simple_return() {
-        check_simple_return(Player::new(0, 3, Point::new(-1.0, 1.0), Angle::new(90.0)));
-        check_simple_return(Player::new(0, 3, Point::new(1.0, -1.0), Angle::new(90.0)));
-        check_simple_return(Player::new(0, 3, Point::new(7.0, 1.0), Angle::new(90.0)));
-        check_simple_return(Player::new(0, 3, Point::new(1.0, 9.0), Angle::new(90.0)));
-        check_simple_return(Player::new(0, 3, Point::new(-1.0, -1.0), Angle::new(90.0)));
-        check_simple_return(Player::new(0, 3, Point::new(-1.0, 7.0), Angle::new(90.0)));
-        check_simple_return(Player::new(0, 3, Point::new(8.0, 7.0), Angle::new(90.0)));
-        check_simple_return(Player::new(0, 3, Point::new(8.0, -7.0), Angle::new(90.0)));
+        check_simple_return(Player::new(3, Point::new(-1.0, 1.0), Angle::new(90.0)));
+        check_simple_return(Player::new(3, Point::new(1.0, -1.0), Angle::new(90.0)));
+        check_simple_return(Player::new(3, Point::new(7.0, 1.0), Angle::new(90.0)));
+        check_simple_return(Player::new(3, Point::new(1.0, 9.0), Angle::new(90.0)));
+        check_simple_return(Player::new(3, Point::new(-1.0, -1.0), Angle::new(90.0)));
+        check_simple_return(Player::new(3, Point::new(-1.0, 7.0), Angle::new(90.0)));
+        check_simple_return(Player::new(3, Point::new(8.0, 7.0), Angle::new(90.0)));
+        check_simple_return(Player::new(3, Point::new(8.0, -7.0), Angle::new(90.0)));
     }
 
     #[test]
     fn return_and_move_target() {
-        let first_player = Player::new(0, 3, Point::new(1.0, 6.0), Angle::new(90.0));
+        let first_player = Player::new(3, Point::new(1.0, 6.0), Angle::new(90.0));
         let (second_player, mut game) = make_game(first_player.clone());
         super::back_to_the_ring(&mut game, 0);
         assert_eq!(game.events.len(), 3);

@@ -33,7 +33,7 @@ pub fn turn_on_target_if_need<S: GameState + EventsBuilder>(
     let target = game.get_player_target(player_id);
     let angle_on_target = player.position.angle_to(&target.position);
     if player.angle != angle_on_target {
-        if (in_same_time) {
+        if in_same_time {
             game.in_same_time();
         }
         game.player_rotate(player_id, angle_on_target);
@@ -46,8 +46,8 @@ mod tests {
 
     #[test]
     fn rotate_on_target() {
-        let first_player = Player::new(0, 3, Point::new(1.0, 1.0), Angle::new(90.0));
-        let second_player = Player::new(1, 3, Point::new(1.0, 4.0), Angle::new(180.0));
+        let first_player = Player::new(3, Point::new(1.0, 1.0), Angle::new(90.0));
+        let second_player = Player::new(3, Point::new(1.0, 4.0), Angle::new(180.0));
         let mut game = Game::new(
             Field::new(5.0, 5.0),
             first_player.clone(),
@@ -67,8 +67,8 @@ mod tests {
     }
     #[test]
     fn no_need_rotate_on_target() {
-        let first_player = Player::new(0, 3, Point::new(1.0, 1.0), Angle::new(0.0));
-        let second_player = Player::new(1, 3, Point::new(1.0, 4.0), Angle::new(180.0));
+        let first_player = Player::new(3, Point::new(1.0, 1.0), Angle::new(0.0));
+        let second_player = Player::new(3, Point::new(1.0, 4.0), Angle::new(180.0));
         let mut game = Game::new(
             Field::new(5.0, 5.0),
             first_player.clone(),

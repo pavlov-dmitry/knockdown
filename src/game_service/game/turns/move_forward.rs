@@ -24,8 +24,8 @@ mod tests {
     #[test]
     fn move_forward() {
         let player_id = 0;
-        let first_player = Player::new(0, 3, Point::new(1.0, 1.0), Angle::new(90.0));
-        let second_player = Player::new(1, 3, Point::new(1.0, 4.0), Angle::new(180.0));
+        let first_player = Player::new(3, Point::new(1.0, 1.0), Angle::new(90.0));
+        let second_player = Player::new(3, Point::new(1.0, 4.0), Angle::new(180.0));
         let mut game = Game::new(
             Field::new(5.0, 5.0),
             first_player.clone(),
@@ -48,8 +48,8 @@ mod tests {
     #[test]
     fn move_forward_short_distance() {
         let player_id = 0;
-        let first_player = Player::new(0, 3, Point::new(1.0, 1.0), Angle::new(270.0));
-        let second_player = Player::new(1, 3, Point::new(1.0, 2.5), Angle::new(180.0));
+        let first_player = Player::new(3, Point::new(1.0, 1.0), Angle::new(270.0));
+        let second_player = Player::new(3, Point::new(1.0, 2.5), Angle::new(180.0));
         let mut game = Game::new(
             Field::new(5.0, 5.0),
             first_player.clone(),
@@ -72,8 +72,8 @@ mod tests {
     #[test]
     fn move_forward_no_ratate() {
         let player_id = 0;
-        let first_player = Player::new(0, 3, Point::new(1.0, 1.0), Angle::new(0.0));
-        let second_player = Player::new(1, 3, Point::new(1.0, 4.0), Angle::new(180.0));
+        let first_player = Player::new(3, Point::new(1.0, 1.0), Angle::new(0.0));
+        let second_player = Player::new(3, Point::new(1.0, 4.0), Angle::new(180.0));
         let mut game = Game::new(
             Field::new(5.0, 5.0),
             first_player.clone(),
