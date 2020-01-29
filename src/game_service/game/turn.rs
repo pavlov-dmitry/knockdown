@@ -1,5 +1,5 @@
 /// Варианты хода которые может совершить игрок
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub enum Turn {
     /// пропуск хода
     Pass,
