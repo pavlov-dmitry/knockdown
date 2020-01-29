@@ -7,23 +7,44 @@ mod turns;
 mod types;
 
 use field::Field;
-use game_event::{EventsBuilder, GameEvent};
+use game_event::EventsBuilder;
+pub use game_event::PlayerEvent;
 use player::Player;
 use state::GameState;
-use turn::Turn;
-use types::{Angle, Id, Point};
+pub use turn::Turn;
+pub use types::Id;
+use types::{Angle, Point, BODY_SIZE};
 
 #[derive(Debug)]
-struct Game {
+pub struct Game {
     field: Field,
     players: [Player; 2],
-    events: Vec<GameEvent>,
+    events: Vec<PlayerEvent>,
     frame_idx: usize,
     next_action_in_parallel_flag: bool,
-    game_over: bool,
+    winner: Option<Id>,
 }
 
 impl Game {
+    pub fn create_standart() -> Game {
+        let field_size = 5.0 * BODY_SIZE;
+        let center_of_ring = Point::new(field_size / 2.0, field_size / 2.0);
+        let first_position = center_of_ring.layout_point(&Angle::new(-45.0), BODY_SIZE * 1.25);
+        let second_positon = center_of_ring.layout_point(&Angle::new(135.0), BODY_SIZE * 1.25);
+        let hp = 3;
+        Game {
+            field: Field::new(field_size, field_size),
+            players: [
+                Player::new(hp, first_position, Angle::new(135.0)),
+                Player::new(hp, second_positon, Angle::new(-45.0)),
+            ],
+            events: Vec::new(),
+            frame_idx: 0,
+            next_action_in_parallel_flag: false,
+            winner: None,
+        }
+    }
+
     pub fn new(field: Field, first_player: Player, second_player: Player) -> Game {
         Game {
             field,
@@ -31,8 +52,19 @@ impl Game {
             events: Vec::new(),
             frame_idx: 0,
             next_action_in_parallel_flag: false,
-            game_over: false,
+            winner: None,
         }
+    }
+
+    pub fn make_turn(&mut self, player_id: Id, turn: Turn) -> Vec<PlayerEvent> {
+        make_turn(self, player_id, turn);
+        let result = self.events.clone();
+        self.events.clear();
+        result
+    }
+
+    pub fn winner(&self) -> Option<Id> {
+        self.winner.clone()
     }
 }
 

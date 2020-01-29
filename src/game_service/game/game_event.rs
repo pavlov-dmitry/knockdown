@@ -4,24 +4,11 @@ use super::types::{Angle, Duration, HitPoints, Id, Point};
 use super::Game;
 use std::default::Default;
 
-/// Игровые событий
-#[derive(Debug)]
-pub enum GameEvent {
-    /// что-то произошло с игроком
-    PlayerEvent(PlayerEvent),
-    /// событие по которому сервер ожидает хода игрока
-    YourTurn,
-    /// подтверждение получения хода
-    TurnAccepted(Turn),
-    /// конец игры
-    GameOver(GameOver),
-}
-
 /// Действие произошедшее с игроком.
 /// Изменения могут происходить паралельно.
 /// Всё время в игре тактируетс по игровым фреймам, и несколько изменений могут произойти
 /// в одном и том же временном фрейме (time_frame_idx).
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PlayerEvent {
     /// идентификатор игрока
     player_id: Id,
@@ -32,7 +19,7 @@ pub struct PlayerEvent {
 }
 
 /// Изменения которые произошли с игроком
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum PlayerDiff {
     MoveTo(Point),
     MoveByCircle(MoveByCircle),
@@ -47,13 +34,13 @@ enum PlayerDiff {
     HitPoints(HitPoints),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct MoveByCircle {
     rotation_point: Point,
     angle_diff: f32,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct GameOver {
     winner_player_id: Id,
 }
@@ -156,10 +143,7 @@ impl EventsBuilder for Game {
     }
 
     fn game_over(&mut self, winner_id: Id) -> &mut Self {
-        self.events.push(GameEvent::GameOver(GameOver {
-            winner_player_id: winner_id,
-        }));
-        self.game_over = true;
+        self.winner = Some(winner_id);
         self
     }
 }
@@ -170,11 +154,11 @@ impl Game {
             self.frame_idx += 1;
         }
         self.next_action_in_parallel_flag = false;
-        self.events.push(GameEvent::PlayerEvent(PlayerEvent {
+        self.events.push(PlayerEvent {
             player_id,
             action,
             time_frame_idx: self.frame_idx,
-        }));
+        });
         self
     }
 }
